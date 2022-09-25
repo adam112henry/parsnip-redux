@@ -9,8 +9,9 @@ import App from './App';
 import './index.css';
 //import allReducers from './reducers/index';
 import reportWebVitals from './reportWebVitals';
+import { devToolsEnhancer } from 'redux-devtools-extension';
 
-const store = createStore(tasks);
+const store = createStore(tasks, devToolsEnhancer());
 //const reducer = combineReducers({tasks: tasks});
 //const store = configureStore(reducer);
 //const store = configureStore({allReducers});
@@ -21,6 +22,22 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    const NextApp = require('./App').default;
+    ReactDOM.render(
+      <Provider store={store}><NextApp /></Provider>, 
+      document.getElementById('root')
+    );
+  });
+
+  module.hot.accept('./reducers', () => {
+    const nextRootReducer = require('./reducers').default;
+    store.replaceReducer(nextRootReducer);
+  });
+}
+
 
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(
