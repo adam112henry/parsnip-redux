@@ -1,17 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 //import { createStore } from 'redux';
-import { legacy_createStore as createStore } from 'redux';
+import { legacy_createStore as createStore, applyMiddleware } from 'redux';
 //import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import tasks from './reducers'
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
+//import tasks from './reducers';
+import tasksReducer from './reducers';
 import App from './App';
 import './index.css';
-//import allReducers from './reducers/index';
 import reportWebVitals from './reportWebVitals';
-import { devToolsEnhancer } from 'redux-devtools-extension';
 
-const store = createStore(tasks, devToolsEnhancer());
+const rootReducer = (state = {}, action) => {
+  return {
+    tasks: tasksReducer(state.tasks, action),
+  };
+};
+
+const store = createStore(
+  rootReducer, 
+  composeWithDevTools(applyMiddleware(thunk)));
 //const reducer = combineReducers({tasks: tasks});
 //const store = configureStore(reducer);
 //const store = configureStore({allReducers});
