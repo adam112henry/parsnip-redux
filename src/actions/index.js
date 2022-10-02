@@ -1,10 +1,5 @@
 import * as api from '../api';
-
-function fetchTasksStarted() {
-    return {
-        type: 'FETCH_TASKS_STARTED',
-    };
-}
+import { CALL_API } from '../middleware/api';
 
 // export function fetchTasks() {
 //     return dispatch => {
@@ -18,58 +13,103 @@ function fetchTasksStarted() {
 //     }
 // }
 
+export const FETCH_TASKS_STARTED = 'FETCH_TASKS_STARTED';
+export const FETCH_TASKS_SUCCEEDED = 'FETCH_TASKS_SUCCEEDED';
+export const FETCH_TASKS_FAILED = 'FETCH_TASKS_FAILED';
+export const CREATE_TASK_STARTED = 'CREATE_TASK_STARTED';
+export const CREATE_TASK_SUCCEEDED = 'CREATE_TASK_SUCCEEDED';
+export const CREATE_TASK_FAILED = 'CREATE_TASK_FAILED';
+
 export function fetchTasks() {
-    return dispatch => {
-        dispatch(fetchTasksStarted());
-
-        api.fetchTasks()
-            .then(resp => {
-                setTimeout(() => {
-                   dispatch(fetchTasksSucceeded(resp.data));
-                }, 2000);
-                //throw new Error("Oh no, unable to fetch tasks!!!");
-            })
-            .catch(err => {
-                dispatch(fetchTasksFailed(err.message));
-            });
-    };
-};
-
-function fetchTasksSucceeded(tasks) {
     return {
-        type: 'FETCH_TASKS_SUCCEEDED',
-        payload: {
-            tasks,
+        [CALL_API]: {
+            types: [FETCH_TASKS_STARTED, FETCH_TASKS_SUCCEEDED, FETCH_TASKS_FAILED],
+            endpoint: '/tasks',
         },
     };
 }
 
-function fetchTasksFailed(error) {
+export function createTask({ title, description, status = 'Unstarted' }) {
     return {
-        type: 'FETCH_TASKS_FAILED',
-        payload: {
-            error,
+        [CALL_API]: {
+            types: [CREATE_TASK_STARTED, CREATE_TASK_SUCCEEDED, CREATE_TASK_FAILED],
+            endpoint: '/tasks',
+            method: 'POST',
+            body: {
+                title,
+                description,
+                status,
+            },
         },
     };
 }
 
-function createTaskSucceeded(task) {
-    return {
-        type: 'CREATE_TASK_SUCCEEDED',
-        payload: {
-            task,
-        },
-    };
-}
+// export function fetchTasks() {
+//     return dispatch => {
+//         dispatch(fetchTasksStarted());
 
-export function createTask ({ title, description, status = 'Unstarted' }) {
-    return dispatch => {
-        api.createTask({ title, description, status })
-            .then(resp => {
-                dispatch(createTaskSucceeded(resp.data));
-            });
-    };
-}
+//         api.fetchTasks()
+//             .then(resp => {
+//                 setTimeout(() => {
+//                    dispatch(fetchTasksSucceeded(resp.data));
+//                 }, 2000);
+//                 //throw new Error("Oh no, unable to fetch tasks!!!");
+//             })
+//             .catch(err => {
+//                 dispatch(fetchTasksFailed(err.message));
+//             });
+//     };
+// };
+
+// function fetchTasksStarted() {
+//     return {
+//         type: 'FETCH_TASKS_STARTED',
+//     };
+// }
+
+// function fetchTasksSucceeded(tasks) {
+//     return {
+//         type: 'FETCH_TASKS_SUCCEEDED',
+//         payload: {
+//             tasks,
+//         },
+//     };
+// }
+
+// function fetchTasksFailed(error) {
+//     return {
+//         type: 'FETCH_TASKS_FAILED',
+//         payload: {
+//             error,
+//         },
+//     };
+// }
+
+// function createTaskSucceeded(task) {
+//     return {
+//         type: 'CREATE_TASK_SUCCEEDED',
+//         payload: {
+//             task,
+//         },
+//         meta: {
+//             analytics: {
+//                 event: 'create_task',
+//                 data: {
+//                     id: task.id,
+//                 },
+//             },
+//         },
+//     };
+// }
+
+// export function createTask ({ title, description, status = 'Unstarted' }) {
+//     return dispatch => {
+//         api.createTask({ title, description, status })
+//             .then(resp => {
+//                 dispatch(createTaskSucceeded(resp.data));
+//             });
+//     };
+// }
 
 function editTaskSucceeded (task) {
     return {

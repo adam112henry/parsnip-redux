@@ -36,11 +36,11 @@ const initialState = {
 
 export default function tasks(state = initialState, action) {
   switch (action.type) {
-    case 'CREATE_TASK': {
-      return { 
-        tasks: state.tasks.concat(action.payload), 
-      };
-    }
+    // case 'CREATE_TASK': {
+    //   return { 
+    //     tasks: state.tasks.concat(action.payload), 
+    //   };
+    // }
     case 'EDIT_TASK': {
       const { payload } = action;
       return { 
@@ -76,7 +76,7 @@ export default function tasks(state = initialState, action) {
       return {
         ...state,
         isLoading: false,
-        tasks: action.payload.tasks,
+        tasks: action.payload,
       };
     }
     case 'FETCH_TASKS_FAILED': {
@@ -89,7 +89,7 @@ export default function tasks(state = initialState, action) {
     case 'CREATE_TASK_SUCCEEDED': {
       return {
         ...state,
-        tasks: state.tasks.concat(action.payload.task),
+        tasks: state.tasks.concat(action.payload),
       };
     }
     default: {

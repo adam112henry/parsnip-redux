@@ -11,6 +11,9 @@ import tasksReducer from './reducers';
 import App from './App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import logger from './middleware/logger';
+import analytics from './middleware/analytics';
+import apiMiddleware from './middleware/api';
 
 const rootReducer = (state = {}, action) => {
   return {
@@ -20,7 +23,7 @@ const rootReducer = (state = {}, action) => {
 
 const store = createStore(
   rootReducer, 
-  composeWithDevTools(applyMiddleware(thunk)));
+  composeWithDevTools(applyMiddleware(thunk, apiMiddleware, logger, analytics)));
 //const reducer = combineReducers({tasks: tasks});
 //const store = configureStore(reducer);
 //const store = configureStore({allReducers});
@@ -47,13 +50,6 @@ if (module.hot) {
   });
 }
 
-
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>
-// );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
