@@ -4,7 +4,7 @@
       "id": 1,
       "title": "Learn Redux",
       "description": "The store, actions, and reducers, oh my!",
-      "status": "Unstarted"
+      "status": "In Progress"
     },
     {
       "id": 2,
@@ -29,6 +29,12 @@
       "description": "Onions are the best",
       "status": "In Progress",
       "id": 5
+    },
+    {
+      "title": "Do laundry",
+      "description": "This could take awhile",
+      "status": "Unstarted",
+      "id": 6
     }
   ]
 }
