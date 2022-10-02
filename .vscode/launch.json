@@ -7,14 +7,18 @@
         // To start up the api, run the following in terminal:
         // $ json-server --watch db.json --port 3001
         {
+            // use this config when debugging in Chrome dev tools
             "name": "Launch via NPM",
+            "type": "node",
             "request": "launch",
             "runtimeArgs": ["run-script", "start"],
             "runtimeExecutable": "npm",
-            "skipFiles": ["<node_internals>/**"],
-            "type": "node"
+            "skipFiles": ["<node_internals>/**"]
         },
         {
+            // use this config to debug in VSCode
+            // in terminal run $ npm start
+            // Set breakpoints, then run/debug this launch config from VSCode
             "name": "Launch Chrome against localhost",
             "type": "chrome",
             "request": "launch",
