@@ -10,6 +10,8 @@ import thunk from 'redux-thunk';
 import tasksReducer from './reducers';
 import App from './App';
 import './index.css';
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from './sagas';
 import reportWebVitals from './reportWebVitals';
 
 const rootReducer = (state = {}, action) => {
@@ -18,12 +20,17 @@ const rootReducer = (state = {}, action) => {
   };
 };
 
+// initiate the saga
+const sagaMiddleware = createSagaMiddleware();
+
 const store = createStore(
   rootReducer, 
-  composeWithDevTools(applyMiddleware(thunk)));
+  composeWithDevTools(applyMiddleware(thunk, sagaMiddleware)));
 //const reducer = combineReducers({tasks: tasks});
 //const store = configureStore(reducer);
 //const store = configureStore({allReducers});
+
+sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(
   <Provider store={store}>

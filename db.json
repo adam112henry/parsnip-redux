@@ -4,37 +4,43 @@
       "id": 1,
       "title": "Learn Redux",
       "description": "The store, actions, and reducers, oh my!",
-      "status": "In Progress"
+      "status": "In Progress",
+      "timer": 0
     },
     {
       "id": 2,
       "title": "Peace on Earth",
       "description": "Worth the effort",
-      "status": "In Progress"
+      "status": "In Progress",
+      "timer": 0
     },
     {
       "id": 3,
       "title": "Create Facebook for dogs",
       "description": "The hottest new social network",
-      "status": "Unstarted"
+      "status": "Unstarted",
+      "timer": 0
     },
     {
+      "id": 4,
       "title": "Cut the grass",
       "description": "Watch for toads",
       "status": "Completed",
-      "id": 4
+      "timer": 0
     },
     {
+      "id": 5,
       "title": "Pick vegetables",
       "description": "Onions are the best",
-      "status": "In Progress",
-      "id": 5
+      "status": "Completed",
+      "timer": 0
     },
     {
+      "id": 6,
       "title": "Do laundry",
       "description": "This could take awhile",
       "status": "Unstarted",
-      "id": 6
+      "timer": 0
     }
   ]
 }

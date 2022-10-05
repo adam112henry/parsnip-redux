@@ -101,3 +101,11 @@ hr {
 .task-list-title {
   margin-bottom: 10px;
 }
+
+.task-timer {
+  margin-right: 10px;
+  color: #76dc76;
+  text-align: right;
+  font-weight: bold;
+}
+

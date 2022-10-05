@@ -1,57 +1,45 @@
 import * as api from '../api';
 
-function fetchTasksStarted() {
+export function fetchTasks() {
     return {
         type: 'FETCH_TASKS_STARTED',
     };
 }
 
-// export function fetchTasks() {
-//     return dispatch => {
-//         api.fetchTasks().then(resp => {
-//             dispatch(fetchTasksSucceeded(resp.data));
-//         });
-//         // axios.get('http://localhost:3001/tasks')
-//         //     .then(resp => {
-//         //         dispatch(fetchTasksSucceeded(resp.data));
-//         //     });
-//     }
+// function fetchTasksSucceeded(tasks) {
+//     return {
+//         type: 'FETCH_TASKS_SUCCEEDED',
+//         payload: {
+//             tasks,
+//         },
+//     };
 // }
 
-export function fetchTasks() {
-    return dispatch => {
-        dispatch(fetchTasksStarted());
+// function fetchTasksFailed(error) {
+//     return {
+//         type: 'FETCH_TASKS_FAILED',
+//         payload: {
+//             error,
+//         },
+//     };
+// }
 
-        api.fetchTasks()
-            .then(resp => {
-                setTimeout(() => {
-                   dispatch(fetchTasksSucceeded(resp.data));
-                }, 2000);
-                //throw new Error("Oh no, unable to fetch tasks!!!");
-            })
-            .catch(err => {
-                dispatch(fetchTasksFailed(err.message));
-            });
-    };
-};
+// export function fetchTasks() {
+//     return dispatch => {
+//         dispatch(fetchTasksStarted());
 
-function fetchTasksSucceeded(tasks) {
-    return {
-        type: 'FETCH_TASKS_SUCCEEDED',
-        payload: {
-            tasks,
-        },
-    };
-}
-
-function fetchTasksFailed(error) {
-    return {
-        type: 'FETCH_TASKS_FAILED',
-        payload: {
-            error,
-        },
-    };
-}
+//         api.fetchTasks()
+//             .then(resp => {
+//                 setTimeout(() => {
+//                    dispatch(fetchTasksSucceeded(resp.data));
+//                 }, 2000);
+//                 //throw new Error("Oh no, unable to fetch tasks!!!");
+//             })
+//             .catch(err => {
+//                 dispatch(fetchTasksFailed(err.message));
+//             });
+//     };
+// };
 
 function createTaskSucceeded(task) {
     return {
@@ -83,13 +71,36 @@ function editTaskSucceeded (task) {
 export function editTask (id, params = {}) {
     return (dispatch, getState) => {
         const task = getTaskById(getState().tasks.tasks, id);
-        const updatedTask = Object.assign({}, task, params);
-
+        const updatedTask = {  
+            ...task,
+            ...params,
+        };
         api.editTask(id, updatedTask)
             .then(resp => {
                 dispatch(editTaskSucceeded(resp.data));
+                if (resp.data.status === 'In Progress') {
+                    return dispatch(progressTimerStart(resp.data.id));
+                }
+                
+                if (task.status === 'In Progress') { // this is only efficient because currently only status is updateable
+                    return dispatch(progressTimerStop(resp.data.id));
+                }
             });
     };
+}
+
+function progressTimerStart(taskId) {
+    return { 
+        type: 'TIMER_STARTED',
+        payload: { taskId }
+    }
+}
+
+function progressTimerStop(taskId) {
+    return { 
+        type: 'TIMER_STOPPED',
+        payload: { taskId }
+    }
 }
 
 function getTaskById(tasks, id) {
