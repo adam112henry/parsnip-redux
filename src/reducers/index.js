@@ -1,38 +1,37 @@
-/* import { uniqueId } from "../actions";
-
-const mockTasks = [
-    {
-      id: uniqueId(),
-      title: 'Learn Redux',
-      description: 'The store, actions, and reducers, oh my!',
-      status: 'In Progress',
-    },
-    {
-      id: uniqueId(),
-      title: 'Peace on Earth',
-      description: 'No big deal',
-      status: 'In Progress',
-    },
-    {
-      id: uniqueId(),
-      title: 'Todo',
-      description: 'Wow, lot\'s of work',
-      status: 'Unstarted',
-    },
-    {
-      id: uniqueId(),
-      title: 'My Work',
-      description: 'All of the work in the world',
-      status: 'Completed',
-    },
-  
-]; */
+import { createSelector } from "reselect";
+import { TASK_STATUSES } from "../constants";
 
 const initialState = {
   tasks: [],
   isLoading: false,
   error: null,
+  searchTerm: ''
 };
+
+// selectors for tasks and search term
+const getTasks = state => state.tasks.tasks;
+const getSearchTerm = state => state.tasks.searchTerm;
+
+// These are memoized selectors because they use the createSelector() function
+const getFilteredTasks = createSelector(
+  [getTasks, getSearchTerm],
+  (tasks, searchTerm) => {
+    return tasks.filter(task => task.title.match(new RegExp(searchTerm, 'i')));
+  },
+);
+
+export const getGroupedAndFilteredTasks = createSelector(
+  [getFilteredTasks],
+  tasks => {
+    const grouped = [];
+
+    TASK_STATUSES.forEach(status => {
+      grouped[status] = tasks.filter(task => task.status === status);
+    });
+
+    return grouped;
+  },
+);
 
 export default function tasks(state = initialState, action) {
   switch (action.type) {
@@ -100,6 +99,12 @@ export default function tasks(state = initialState, action) {
         return task;
       });
       return { ...state, tasks: nextTasks };
+    }
+    case 'FILTER_TASKS': {
+      return {
+        ...state,
+        searchTerm: action.payload.searchTerm
+      };
     }
     default: {
       return state;

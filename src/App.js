@@ -2,8 +2,9 @@ import './App.css';
 import React, { Component } from 'react';
 import TasksPage from './components/TasksPage';
 import { connect } from 'react-redux';
-import { createTask, editTask, fetchTasks } from './actions';
+import { createTask, editTask, fetchTasks, filterTasks } from './actions';
 import FlashMessage from './components/FlashMessage';
+import { getGroupedAndFilteredTasks } from './reducers';
 
 class App extends Component {
   componentDidMount() {
@@ -17,18 +18,22 @@ class App extends Component {
   onStatusChange = ( id, status ) => {
     this.props.dispatch(editTask(id, {status}));
   };
+
+  onSearch = searchTerm => {
+    this.props.dispatch(filterTasks(searchTerm));
+  };
   
   render() {
     //console.log('props from the App: ', this.props)
     return (
       <div className='container'>
-        {this.props.error && 
-          <FlashMessage message={this.props.error} /> }
+        {this.props.error && <FlashMessage message={this.props.error} />}
         <div className='main-content'>
           <TasksPage 
             tasks={this.props.tasks} 
             onCreateTask={this.onCreateTask}  
             onStatusChange={this.onStatusChange}  
+            onSearch={this.onSearch}
             isLoading={this.props.isLoading}
           />
         </div>
@@ -38,8 +43,10 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-  const { tasks, isLoading, error } = state.tasks;
-  return { tasks, isLoading, error };
+  const { isLoading, error } = state.tasks;
+  return {
+    tasks: getGroupedAndFilteredTasks(state), isLoading, error
+  };
 }
 
 export default connect(mapStateToProps) (App);

@@ -6,41 +6,6 @@ export function fetchTasks() {
     };
 }
 
-// function fetchTasksSucceeded(tasks) {
-//     return {
-//         type: 'FETCH_TASKS_SUCCEEDED',
-//         payload: {
-//             tasks,
-//         },
-//     };
-// }
-
-// function fetchTasksFailed(error) {
-//     return {
-//         type: 'FETCH_TASKS_FAILED',
-//         payload: {
-//             error,
-//         },
-//     };
-// }
-
-// export function fetchTasks() {
-//     return dispatch => {
-//         dispatch(fetchTasksStarted());
-
-//         api.fetchTasks()
-//             .then(resp => {
-//                 setTimeout(() => {
-//                    dispatch(fetchTasksSucceeded(resp.data));
-//                 }, 2000);
-//                 //throw new Error("Oh no, unable to fetch tasks!!!");
-//             })
-//             .catch(err => {
-//                 dispatch(fetchTasksFailed(err.message));
-//             });
-//     };
-// };
-
 function createTaskSucceeded(task) {
     return {
         type: 'CREATE_TASK_SUCCEEDED',
@@ -105,4 +70,11 @@ function progressTimerStop(taskId) {
 
 function getTaskById(tasks, id) {
     return tasks.find(task => task.id === id);
+}
+
+export function filterTasks(searchTerm) {
+    return {
+        type: 'FILTER_TASKS',
+        payload: { searchTerm }       
+    }
 }

@@ -28,6 +28,19 @@
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "${webRoot}/*"
             }
-        }
+        },
+        {
+            // in terminal run $ npm start-debug
+            // isn't actually working yet...
+            // https://dev.to/zirkelc/debug-a-react-app-in-vscode-21ga
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}/src",
+            "urlFilter": "http://localhost:3000/*"
+            //"url": "http://localhost:3000"
+        },
+
     ]
 }

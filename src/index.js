@@ -16,6 +16,10 @@ import reportWebVitals from './reportWebVitals';
 
 const rootReducer = (state = {}, action) => {
   return {
+    // This is sort of mis-named and a little confusing in the object hierarchy.
+    // There is a parent 'tasks' object (the attribute below) that holds the root state.
+    // Within that root state are children (tasks[], isLoading, error, searchTerm) where tasks[] is an 
+    // array of objects that are the actual tasks, and the other scalar values apply across all tasks.
     tasks: tasksReducer(state.tasks, action),
   };
 };
