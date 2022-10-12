@@ -1,4 +1,55 @@
 import * as api from '../api';
+import { normalize, schema } from 'normalizr';
+
+const taskSchema = new schema.Entity('tasks');
+const projectSchema = new schema.Entity('projects', {
+    tasks: [taskSchema]
+});
+
+function receiveEntities(entities){
+    return {
+        type: 'RECEIVE_ENTITIES',
+        payload: entities
+    };
+}
+
+function fetchProjectsStarted(boards) {
+    return {
+        type: 'FETCH_PROJECTS_STARTED',
+        payload: { boards }
+    };
+}
+
+function fetchProjectsFailed(err) {
+    return {
+        type: 'FETCH_PROJECTS_FAILED',
+        payload: err
+    };
+}
+
+export function fetchProjects() {
+    return (dispatch, getState) => {
+        dispatch(fetchProjectsStarted());
+
+        return api
+            .fetchProjects()
+            .then(resp => {
+                const projects = resp.data;
+                const normalizedData = normalize(projects, [projectSchema]);
+
+                dispatch(receiveEntities(normalizedData));
+
+                if (!getState().page.currentProjectId) {
+                    const defaultProjectId = projects[0].id;
+                    dispatch(setCurrentProjectId(defaultProjectId));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                fetchProjectsFailed(err);
+            });
+    };
+}
 
 export function fetchTasks() {
     return {
@@ -16,8 +67,10 @@ function createTaskSucceeded(task) {
 }
 
 export function createTask ({ title, description, status = 'Unstarted' }) {
-    return dispatch => {
-        api.createTask({ title, description, status })
+    return (dispatch, getState) => {
+        const projectId = getState().page.currentProjectId;
+
+        api.createTask({ title, description, status, projectId })
             .then(resp => {
                 dispatch(createTaskSucceeded(resp.data));
             });
@@ -33,21 +86,20 @@ function editTaskSucceeded (task) {
     };
 }
 
-export function editTask (id, params = {}) {
+export function editTask (task, params = {}) {
     return (dispatch, getState) => {
-        const task = getTaskById(getState().tasks.tasks, id);
         const updatedTask = {  
             ...task,
             ...params,
         };
-        api.editTask(id, updatedTask)
+        api.editTask(task.id, updatedTask)
             .then(resp => {
                 dispatch(editTaskSucceeded(resp.data));
                 if (resp.data.status === 'In Progress') {
                     return dispatch(progressTimerStart(resp.data.id));
                 }
                 
-                if (task.status === 'In Progress') { // this is only efficient because currently only status is updateable
+                if (task.status === 'In Progress') {
                     return dispatch(progressTimerStop(resp.data.id));
                 }
             });
@@ -68,13 +120,16 @@ function progressTimerStop(taskId) {
     }
 }
 
-function getTaskById(tasks, id) {
-    return tasks.find(task => task.id === id);
-}
-
 export function filterTasks(searchTerm) {
     return {
         type: 'FILTER_TASKS',
         payload: { searchTerm }       
     }
+}
+
+export function setCurrentProjectId(id) {
+    return {
+        type: 'SET_CURRENT_PROJECT_ID',
+        payload: { id },
+    };
 }

@@ -1,104 +1,127 @@
 import { createSelector } from "reselect";
 import { TASK_STATUSES } from "../constants";
 
-const initialState = {
-  tasks: [],
+
+const initialTasksState = {
+  items: {},
   isLoading: false,
   error: null,
-  searchTerm: ''
 };
 
-// selectors for tasks and search term
-const getTasks = state => state.tasks.tasks;
-const getSearchTerm = state => state.tasks.searchTerm;
+const initialProjectsState = {
+  items: {},
+  isLoading: false,
+  error: null,
+};
 
-// These are memoized selectors because they use the createSelector() function
-const getFilteredTasks = createSelector(
-  [getTasks, getSearchTerm],
-  (tasks, searchTerm) => {
-    return tasks.filter(task => task.title.match(new RegExp(searchTerm, 'i')));
-  },
-);
+const initialPageState = {
+  currentProjectId: null,
+  searchTerm: '',
+};
 
-export const getGroupedAndFilteredTasks = createSelector(
-  [getFilteredTasks],
-  tasks => {
-    const grouped = [];
+// reducers
 
-    TASK_STATUSES.forEach(status => {
-      grouped[status] = tasks.filter(task => task.status === status);
-    });
-
-    return grouped;
-  },
-);
-
-export default function tasks(state = initialState, action) {
+export function tasks(state = initialTasksState, action) {
   switch (action.type) {
-    case 'FETCH_TASKS_STARTED': {
+    case 'CREATE_TASK_SUCCEEDED':
+    case 'EDIT_TASK_SUCCEEDED': {
+      const { task } = action.payload;
+      const nextTasks = {
+        ...state.items,
+        [task.id]: task,
+      };
+
+      return {
+        ...state,
+        items: nextTasks,
+      };
+    }
+    case 'TIMER_INCREMENT': {
+      // Todo: There is an issue here with type and relationship to object keys and array indices.
+      // The tasks are array elements held in the 'items' object.
+      // App will work fine as long as the task Ids are zero-based, otherwise need to fix below.
+      const nextTasks = Object.keys(state.items).map(taskId => {
+        const task = state.items[taskId];
+        if (task.id === action.payload.taskId) {
+          return {
+            ...task,
+            timer: task.timer + 1,
+          };
+        }
+
+        return task;
+      });
+      
+      return {
+        ...state,
+        items: nextTasks,
+      };
+    }
+    case "RECEIVE_ENTITIES": {
+      const { entities } = action.payload;
+      if (entities && entities.tasks) {
+        return {
+          ...state,
+          isLoading: false,
+          items: entities.tasks,
+        };
+      }
+
+      return state;
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
+export function projects(state = initialProjectsState, action) {
+  switch (action.type) {
+    case "RECEIVE_ENTITIES": {
+      const { entities } = action.payload;
+      if (entities && entities.projects) {
+        return {
+          ...state,
+          isLoading: false,
+          items: entities.projects,
+        };
+      }
+      return state;
+    }
+    case 'FETCH_PROJECTS_STARTED': {
       return {
         ...state,
         isLoading: true,
       };
     }
-    case 'FETCH_TASKS_SUCCEEDED': {
-      return {
-        ...state,
-        isLoading: false,
-        tasks: action.payload.tasks,
-      };
-    }
-    case 'FETCH_TASKS_FAILED': {
-      return {
-        ...state,
-        isLoading: false,
-        error: action.payload.error,
-      };
-    }
-    case 'CREATE_TASK': {
-      return { 
-        tasks: state.tasks.concat(action.payload), 
-      };
-    }
-    case 'EDIT_TASK': {
-      const { payload } = action;
-      return { 
-        tasks: state.tasks.map(task => {
-          if (task.id === payload.id) {
-            return Object.assign({}, task, payload.params);
-          }
-          return task;
-        }), 
-      };
-    }
     case 'CREATE_TASK_SUCCEEDED': {
-      return {
-        ...state,
-        tasks: state.tasks.concat(action.payload.task),
-      };
-    }
-    case 'EDIT_TASK_SUCCEEDED': {
-      const { payload } = action;
+      const { task } = action.payload;
+      const project = state.items[task.projectId];
 
-      const nextTasks = state.tasks.map(task => {
-          if (task.id === payload.task.id) {
-            return payload.task;
-          }
-          return task;
-      });
       return {
         ...state,
-        tasks: nextTasks,
+        items: {
+          ...state.items,
+          [task.projectId]: {
+            ...project,
+            tasks: project.tasks.concat(task.id),
+          },
+        },
       };
     }
-    case 'TIMER_INCREMENT': {
-      const nextTasks = state.tasks.map(task => {
-        if (task.id === action.payload.taskId) {
-          return { ...task, timer: task.timer + 1 };
-        }
-        return task;
-      });
-      return { ...state, tasks: nextTasks };
+    default: {
+      return state;
+    }
+  }
+}
+
+export function page(state = initialPageState, action) {
+  switch (action.type) {
+    case 'SET_CURRENT_PROJECT_ID': {
+      return {
+        ...state,
+        currentProjectId: action.payload.id,
+      };
     }
     case 'FILTER_TASKS': {
       return {
@@ -111,3 +134,47 @@ export default function tasks(state = initialState, action) {
     }
   }
 }
+
+
+// selectors
+const getSearchTerm = state => state.page.searchTerm;
+
+const getTasksByProjectId = state => {
+  const { currentProjectId } = state.page;
+
+  if (!currentProjectId || !state.projects.items[currentProjectId]) {
+    return [];
+  }
+
+  const taskIds = state.projects.items[currentProjectId].tasks;
+  return taskIds.map(id => state.tasks.items[id]);
+};
+
+export const getProjects = state => {
+  return Object.keys(state.projects.items).map(id => {
+    return state.projects.items[id];
+  });
+};
+
+// These are memoized selectors because they use the createSelector() function
+const getFilteredTasks = createSelector(
+  [getTasksByProjectId, getSearchTerm],
+  (tasks, searchTerm) => {
+    return tasks.filter(task => task.title.match(new RegExp(searchTerm, 'i')));
+  }
+);
+
+export const getGroupedAndFilteredTasks = createSelector(
+  [getFilteredTasks],
+  tasks => {
+    const grouped = {};
+
+    TASK_STATUSES.forEach(status => {
+      grouped[status] = tasks.filter(task => task.status === status);
+    });
+
+    return grouped;
+  }
+);
+
+

@@ -6,8 +6,7 @@ import { legacy_createStore as createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
-//import tasks from './reducers';
-import tasksReducer from './reducers';
+import { projects, tasks, page } from './reducers';
 import App from './App';
 import './index.css';
 import createSagaMiddleware from 'redux-saga';
@@ -16,11 +15,9 @@ import reportWebVitals from './reportWebVitals';
 
 const rootReducer = (state = {}, action) => {
   return {
-    // This is sort of mis-named and a little confusing in the object hierarchy.
-    // There is a parent 'tasks' object (the attribute below) that holds the root state.
-    // Within that root state are children (tasks[], isLoading, error, searchTerm) where tasks[] is an 
-    // array of objects that are the actual tasks, and the other scalar values apply across all tasks.
-    tasks: tasksReducer(state.tasks, action),
+    projects: projects(state.projects, action),
+    tasks: tasks(state.tasks, action),
+    page: page(state.page, action)
   };
 };
 
@@ -58,13 +55,6 @@ if (module.hot) {
   });
 }
 
-
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>
-// );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

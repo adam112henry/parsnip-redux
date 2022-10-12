@@ -1,46 +1,62 @@
 {
-  "tasks": [
+  "projects": [
     {
       "id": 1,
-      "title": "Learn Redux",
-      "description": "The store, actions, and reducers, oh my!",
-      "status": "In Progress",
-      "timer": 0
+      "name": "Short-term goals"
     },
     {
       "id": 2,
+      "name": "Long-term goals"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 0,
+      "title": "Learn Redux",
+      "description": "The store, actions, and reducers, oh my!",
+      "status": "In Progress",
+      "timer": 13,
+      "projectId": 1
+    },
+    {
+      "id": 1,
       "title": "Peace on Earth",
       "description": "Worth the effort",
       "status": "In Progress",
-      "timer": 0
+      "timer": 0,
+      "projectId": 2
     },
     {
-      "id": 3,
+      "id": 2,
       "title": "Create Facebook for dogs",
       "description": "The hottest new social network",
       "status": "Unstarted",
-      "timer": 0
+      "timer": 50,
+      "projectId": 2
     },
     {
-      "id": 4,
+      "id": 3,
       "title": "Cut the grass",
       "description": "Watch for toads",
       "status": "Completed",
-      "timer": 0
+      "timer": 78,
+      "projectId": 1
     },
     {
-      "id": 5,
+      "id": 4,
       "title": "Pick vegetables",
       "description": "Onions are the best",
       "status": "Completed",
-      "timer": 0
+      "timer": 0,
+      "projectId": 1
     },
     {
-      "id": 6,
+      "id": 5,
       "title": "Do laundry",
       "description": "This could take awhile",
       "status": "Unstarted",
-      "timer": 0
+      "timer": 0,
+      "projectId": 1
     }
   ]
 }
