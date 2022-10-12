@@ -1,7 +1,8 @@
 # parsnip redux
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). \
-It is a task management board, written in React and Redux.
+It is a task management board, written in React and Redux. \
+App written while studying the excellent book [Redux in Action](https://www.amazon.com/Redux-Action-Marc-Garreau/dp/1617294977/) by Marc Garreau and Will Faurot.
 
 ## Start it up
 
