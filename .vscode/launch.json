@@ -13,7 +13,19 @@
             "request": "launch",
             "runtimeArgs": ["run-script", "start"],
             "runtimeExecutable": "npm",
-            "skipFiles": ["<node_internals>/**"]
+            "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**/*.js", "${workspaceFolder}/lib/**/*.js"]
+        },
+        {
+            // This configuration allows debugging and will skip entry into all of the node files
+            // If run the tests from the Testing side bar (Facebook Jest extension) it does NOT skip the node files
+            // Or, from terminal run $ npm run test (no debugger of course)
+            // Add "jest.autoRun": "false" to settings.json to disable the auto-run (https://stackoverflow.com/questions/57132803/completely-disable-auto-run-of-jest-test-runner-in-visual-studio-code-editor)
+            "name": "Run tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": ["run-script", "test"],
+            "runtimeExecutable": "npm",
+            "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**/*.js", "${workspaceFolder}/lib/**/*.js"]
         },
         {
             // use this config to debug in VSCode
@@ -27,7 +39,8 @@
             "userDataDir": "${workspaceRoot}/.vscode/chrome",
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "${webRoot}/*"
-            }
+            },
+            "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**/*.js", "${workspaceFolder}/lib/**/*.js"]
         },
         {
             // in terminal run $ npm start-debug

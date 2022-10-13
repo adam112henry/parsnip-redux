@@ -57,7 +57,13 @@ export function fetchTasks() {
     };
 }
 
-function createTaskSucceeded(task) {
+export function createTaskRequested() {
+    return {
+        type: 'CREATE_TASK_REQUESTED'
+    };
+}
+
+export function createTaskSucceeded(task) {
     return {
         type: 'CREATE_TASK_SUCCEEDED',
         payload: {
@@ -68,6 +74,7 @@ function createTaskSucceeded(task) {
 
 export function createTask ({ title, description, status = 'Unstarted' }) {
     return (dispatch, getState) => {
+        dispatch(createTaskRequested());
         const projectId = getState().page.currentProjectId;
 
         api.createTask({ title, description, status, projectId })

@@ -39,7 +39,7 @@ function* takeLatestById(actionTypes, saga) {
 // Each watcher is also a generator
 // Although they're not 'watchers' anymore since that 'watching' is now occurring above in the root saga
 
-function* handleProgressTimer({ payload, type }) {
+export function* handleProgressTimer({ payload, type }) {
     if (type === 'TIMER_STARTED') {
         while (true) {
             yield delay(1000);
