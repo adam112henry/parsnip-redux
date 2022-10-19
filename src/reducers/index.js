@@ -150,11 +150,22 @@ const getTasksByProjectId = state => {
   return taskIds.map(id => state.tasks.items[id]);
 };
 
-export const getProjects = state => {
-  return Object.keys(state.projects.items).map(id => {
-    return state.projects.items[id];
-  });
-};
+// export const getProjects = state => {
+//   return Object.keys(state.projects.items).map(id => {
+//     return state.projects.items[id];
+//   });
+// };
+
+// Convert to a memoized selector to avoid the re-render
+export const getProjects = createSelector(
+  [state => state.projects],
+  projects => {
+    return Object.keys(projects.items).map(id => {
+      return projects.items[id];
+    });  
+  },
+);
+
 
 // These are memoized selectors because they use the createSelector() function
 const getFilteredTasks = createSelector(
