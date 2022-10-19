@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import TasksPage from './components/TasksPage';
 import Header from './components/Header';
 import { connect } from 'react-redux';
-import { createTask, editTask, filterTasks, fetchProjects, setCurrentProjectId } from './actions';
+//import { createTask, editTask, filterTasks, fetchProjects, setCurrentProjectId } from './actions';
+import { createTask, editTask, filterTasks, fetchProjects } from './actions';
 import FlashMessage from './components/FlashMessage';
-import { getGroupedAndFilteredTasks, getProjects } from './reducers';
+//import { getGroupedAndFilteredTasks, getProjects } from './reducers';
+import { getGroupedAndFilteredTasks } from './reducers';
 
 class App extends Component {
   componentDidMount() {
@@ -24,9 +26,9 @@ class App extends Component {
     this.props.dispatch(filterTasks(searchTerm));
   };
 
-  onCurrentProjectChange = e => {
-    this.props.dispatch(setCurrentProjectId(Number(e.target.value)));
-  };
+  // onCurrentProjectChange = e => {
+  //   this.props.dispatch(setCurrentProjectId(Number(e.target.value)));
+  // };
   
   render() {
     //console.log('props from the App: ', this.props)
@@ -34,10 +36,13 @@ class App extends Component {
       <div className='container'>
         {this.props.error && <FlashMessage message={this.props.error} />}
         <div className='main-content'>
-          <Header
+          {/* Demonstrates 2 examples - Header is now a "connected" (container) component, which allows some optimizations.
+          TasksPage remains as a "presentational" component. */}
+          {/* <Header
             projects={this.props.projects}
             onCurrentProjectChange={this.onCurrentProjectChange}
-          />
+          /> */}
+          <Header/>
           <TasksPage 
             tasks={this.props.tasks} 
             onCreateTask={this.onCreateTask}  
@@ -55,10 +60,11 @@ function mapStateToProps(state) {
   const { isLoading, error } = state.projects;
   return {
     tasks: getGroupedAndFilteredTasks(state),
-    projects: getProjects(state), 
+    //projects: getProjects(state), 
     isLoading,
     error
   };
 }
 
+// 'connect' passes dispatch to the called component
 export default connect(mapStateToProps) (App);
