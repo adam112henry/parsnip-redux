@@ -1,6 +1,6 @@
 import { call, put, takeLatest, delay, take } from 'redux-saga/effects';
 import { channel } from 'redux-saga';
-import * as api from './api';
+import * as api from '../api';
 
 /***
  * Sagas use generators, which allow a function to be paused and resumed.

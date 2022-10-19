@@ -1,5 +1,5 @@
 //import { call, put, delay } from 'redux-saga/effects';
-import { handleProgressTimer } from '../sagas';
+import { handleProgressTimer } from '../sagas/sagas';
 
 describe('sagas', () => {
     // it('handles the handleProgressTimer happy path', () => {

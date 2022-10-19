@@ -1,13 +1,13 @@
-import './App.css';
+import '../assets/stylesheets/App.css';
 import React, { Component } from 'react';
-import TasksPage from './components/TasksPage';
-import Header from './components/Header';
+import TasksPage from '../components/TasksPage';
+import Header from './Header';
 import { connect } from 'react-redux';
 //import { createTask, editTask, filterTasks, fetchProjects, setCurrentProjectId } from './actions';
-import { createTask, editTask, filterTasks, fetchProjects } from './actions';
-import FlashMessage from './components/FlashMessage';
+import { createTask, editTask, filterTasks, fetchProjects } from '../actions';
+import FlashMessage from '../components/FlashMessage';
 //import { getGroupedAndFilteredTasks, getProjects } from './reducers';
-import { getGroupedAndFilteredTasks } from './reducers';
+import { getGroupedAndFilteredTasks } from '../reducers';
 
 class App extends Component {
   componentDidMount() {

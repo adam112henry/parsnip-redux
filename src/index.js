@@ -7,10 +7,10 @@ import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import { projects, tasks, page } from './reducers';
-import App from './App';
-import './index.css';
+import App from './containers/App';
+import './assets/stylesheets/index.css';
 import createSagaMiddleware from 'redux-saga';
-import rootSaga from './sagas';
+import rootSaga from './sagas/sagas';
 import reportWebVitals from './reportWebVitals';
 
 const rootReducer = (state = {}, action) => {
@@ -41,8 +41,8 @@ ReactDOM.render(
 );
 
 if (module.hot) {
-  module.hot.accept('./App', () => {
-    const NextApp = require('./App').default;
+  module.hot.accept('./containers/App', () => {
+    const NextApp = require('./containers/App').default;
     ReactDOM.render(
       <Provider store={store}><NextApp /></Provider>, 
       document.getElementById('root')
