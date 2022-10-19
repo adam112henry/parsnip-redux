@@ -1,5 +1,6 @@
 import * as api from '../api';
 import { normalize, schema } from 'normalizr';
+import { batchActions } from 'redux-batched-actions';
 
 const taskSchema = new schema.Entity('tasks');
 const projectSchema = new schema.Entity('projects', {
@@ -37,12 +38,17 @@ export function fetchProjects() {
                 const projects = resp.data;
                 const normalizedData = normalize(projects, [projectSchema]);
 
-                dispatch(receiveEntities(normalizedData));
-
-                if (!getState().page.currentProjectId) {
-                    const defaultProjectId = projects[0].id;
-                    dispatch(setCurrentProjectId(defaultProjectId));
-                }
+                // dispatch(receiveEntities(normalizedData));
+                // if (!getState().page.currentProjectId) {
+                //     const defaultProjectId = projects[0].id;
+                //     dispatch(setCurrentProjectId(defaultProjectId));
+                // }
+                dispatch(
+                    batchActions([
+                        receiveEntities(normalizedData),
+                        setCurrentProjectId(projects[0].id),
+                    ]),
+                );
             })
             .catch(err => {
                 console.error(err);

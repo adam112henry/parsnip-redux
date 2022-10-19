@@ -12,6 +12,7 @@ import './index.css';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas';
 import reportWebVitals from './reportWebVitals';
+import { enableBatching } from 'redux-batched-actions';
 
 const rootReducer = (state = {}, action) => {
   return {
@@ -25,7 +26,7 @@ const rootReducer = (state = {}, action) => {
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(
-  rootReducer, 
+  enableBatching(rootReducer), 
   composeWithDevTools(applyMiddleware(thunk, sagaMiddleware)));
 //const reducer = combineReducers({tasks: tasks});
 //const store = configureStore(reducer);
