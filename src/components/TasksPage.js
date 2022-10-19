@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import TaskList from './TaskList';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { createTask, editTask, filterTasks } from '../actions';
+import { getGroupedAndFilteredTasks } from '../reducers';
 
 class TasksPage extends Component {
     constructor(props) {
@@ -29,12 +33,22 @@ class TasksPage extends Component {
 
     onCreateTask = (e) => {
         e.preventDefault();
-        this.props.onCreateTask({
+        // this.props.onCreateTask({
+        //     title: this.state.title,
+        //     description: this.state.description,
+        // });
+        this.props.createTask({
             title: this.state.title,
             description: this.state.description,
+            projectId: this.props.currentProjectId,
         });
+
         this.resetForm();
     }
+
+    onStatusChange = (task, status) => {
+        this.props.editTask(task, { status });
+    };
 
     onSearch = (e) => {
         this.props.onSearch(e.target.value);
@@ -45,7 +59,8 @@ class TasksPage extends Component {
     }
 
     renderTaskLists() { 
-        const { onStatusChange, tasks } = this.props;
+        //const { onStatusChange, tasks } = this.props;
+        const { tasks } = this.props;
         
         return Object.keys(tasks).map(status => {
             const tasksByStatus = tasks[status];
@@ -54,13 +69,15 @@ class TasksPage extends Component {
                     key={status}
                     status={status}
                     tasks={tasksByStatus}
-                    onStatusChange={onStatusChange}
+                    onStatusChange={this.onStatusChange}
                 />
             );
         });
     }
 
     render() {
+        console.log('rendering TasksPage');
+
         if (this.props.isLoading) {
             return (
                 <div className="tasks-loading">
@@ -115,4 +132,26 @@ class TasksPage extends Component {
     }
 }
 
-export default TasksPage;
+function mapStateToProps(state) {
+    const { isLoading } = state.projects;
+
+    return {
+        tasks: getGroupedAndFilteredTasks(state),
+        currentProjectId: state.page.currentProjectId,
+        isLoading,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(
+        {
+            onSearch: filterTasks,
+            createTask,
+            editTask,
+        },
+        dispatch,
+    );
+}
+
+//export default TasksPage;
+export default connect(mapStateToProps, mapDispatchToProps)(TasksPage);

@@ -3,30 +3,31 @@ import React, { Component } from 'react';
 import TasksPage from './components/TasksPage';
 import Header from './components/Header';
 import { connect } from 'react-redux';
-import { createTask, editTask, filterTasks, fetchProjects, setCurrentProjectId } from './actions';
+//import { createTask, editTask, filterTasks, fetchProjects, setCurrentProjectId } from './actions';
+import { fetchProjects } from './actions';
 import FlashMessage from './components/FlashMessage';
-import { getGroupedAndFilteredTasks, getProjects } from './reducers';
+//import { getGroupedAndFilteredTasks, getProjects } from './reducers';
 
 class App extends Component {
   componentDidMount() {
     this.props.dispatch(fetchProjects());
   }
 
-  onCreateTask = ({ title, description }) => {
-    this.props.dispatch(createTask({ title, description }));
-  };
+  // onCreateTask = ({ title, description }) => {
+  //   this.props.dispatch(createTask({ title, description }));
+  // };
 
-  onStatusChange = ( task, status ) => {
-    this.props.dispatch(editTask(task, { status }));
-  };
+  // onStatusChange = ( task, status ) => {
+  //   this.props.dispatch(editTask(task, { status }));
+  // };
 
-  onSearch = searchTerm => {
-    this.props.dispatch(filterTasks(searchTerm));
-  };
+  // onSearch = searchTerm => {
+  //   this.props.dispatch(filterTasks(searchTerm));
+  // };
 
-  onCurrentProjectChange = e => {
-    this.props.dispatch(setCurrentProjectId(Number(e.target.value)));
-  };
+  // onCurrentProjectChange = e => {
+  //   this.props.dispatch(setCurrentProjectId(Number(e.target.value)));
+  // };
   
   render() {
     //console.log('props from the App: ', this.props)
@@ -34,7 +35,7 @@ class App extends Component {
       <div className='container'>
         {this.props.error && <FlashMessage message={this.props.error} />}
         <div className='main-content'>
-          <Header
+          {/* <Header
             projects={this.props.projects}
             onCurrentProjectChange={this.onCurrentProjectChange}
           />
@@ -44,21 +45,30 @@ class App extends Component {
             onStatusChange={this.onStatusChange}  
             onSearch={this.onSearch}
             isLoading={this.props.isLoading}
-          />
+          /> */}
+          <Header />
+          <TasksPage />
         </div>
       </div>
     );
   }
 }
 
+// function mapStateToProps(state) {
+//   const { isLoading, error } = state.projects;
+//   return {
+//     tasks: getGroupedAndFilteredTasks(state),
+//     projects: getProjects(state), 
+//     isLoading,
+//     error
+//   };
+// }
+
 function mapStateToProps(state) {
-  const { isLoading, error } = state.projects;
-  return {
-    tasks: getGroupedAndFilteredTasks(state),
-    projects: getProjects(state), 
-    isLoading,
-    error
-  };
+  const { error } = state.projects;
+  return { error };
 }
 
+// The only component in this app "connected" to the redux store is App - not true any more
+// 'connect' passes dispatch to the called component
 export default connect(mapStateToProps) (App);
