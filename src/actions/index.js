@@ -34,6 +34,7 @@ export function fetchProjects() {
         return api
             .fetchProjects()
             .then(resp => {
+                //throw 'An error occurred. Could not load projects.';
                 const projects = resp.data;
                 const normalizedData = normalize(projects, [projectSchema]);
 
@@ -46,7 +47,7 @@ export function fetchProjects() {
             })
             .catch(err => {
                 console.error(err);
-                fetchProjectsFailed(err);
+                dispatch(fetchProjectsFailed(err));
             });
     };
 }
@@ -94,7 +95,7 @@ function editTaskSucceeded (task) {
 }
 
 export function editTask (task, params = {}) {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         const updatedTask = {  
             ...task,
             ...params,

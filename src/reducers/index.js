@@ -94,6 +94,14 @@ export function projects(state = initialProjectsState, action) {
         isLoading: true,
       };
     }
+    case 'FETCH_PROJECTS_FAILED': {
+      console.log('FETCH_PROJECTS_FAILED');
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      };
+    }
     case 'CREATE_TASK_SUCCEEDED': {
       const { task } = action.payload;
       const project = state.items[task.projectId];
@@ -156,6 +164,9 @@ const getTasksByProjectId = state => {
 //   });
 // };
 
+
+// These are memoized selectors because they use the createSelector() function
+
 // Convert to a memoized selector to avoid the re-render
 export const getProjects = createSelector(
   [state => state.projects],
@@ -166,8 +177,6 @@ export const getProjects = createSelector(
   },
 );
 
-
-// These are memoized selectors because they use the createSelector() function
 const getFilteredTasks = createSelector(
   [getTasksByProjectId, getSearchTerm],
   (tasks, searchTerm) => {
